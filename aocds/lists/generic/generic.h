@@ -1,0 +1,6 @@
+// COMMON FUNCTIONS AND MACROS 
+
+
+#ifndef __COMMON__FUNCS__
+  #define __COMMON_FUNCS__
+  
