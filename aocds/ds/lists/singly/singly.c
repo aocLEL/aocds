@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "singly.h"
+#include "../../common/types.h"
+
 
 #define __private static
 
 
-SinglyList *s_create_list(ListType type) {
+SinglyList *s_create_list(DSDataTypes type) {
   SinglyList *list = malloc(sizeof(SinglyList));
-  if(list == NULL)
+  if(!list)
     return NULL;
   list->type = type;
   list->size = 0;
@@ -17,36 +19,9 @@ SinglyList *s_create_list(ListType type) {
   return list;
 }
 
-// cast void pointer to specific type
-__private void type_dispatcher(const SinglyNode *node, ListType type, ListElemPtr dest) {
-     switch(type) { 
-        case INT_LIST:
-          {
-            int *data_ptr = (int*)dest;
-            *data_ptr = (int)(long)node->data; 
-            break;
-          }
-        case CHAR_LIST:
-          {
-            char *data_ptr = (char*)dest;
-            *data_ptr = (char)(long)node->data;
-            break;
-          }
-        case UINT_LIST:
-          {
-            unsigned *data_ptr = (unsigned*)dest;
-            *data_ptr = (unsigned)(long)node->data;
-            break;
-          } 
-        default:
-            printf("Not a list type!!\n");
-            exit(EXIT_FAILURE);
-            break;
-    } 
-}
 
 // get value stored in node at position pos
-const SinglyNode *s_get_node_pos_val(SinglyList *list, size_t pos, ListElemPtr dest) {
+const SinglyNode *slist_getat(SinglyList *list, size_t pos, DSData dest) {
   if(dest == NULL || pos >= list->size || list == NULL)
     return NULL;
   SinglyNode *_it;
@@ -60,7 +35,7 @@ const SinglyNode *s_get_node_pos_val(SinglyList *list, size_t pos, ListElemPtr d
 }
 
 // get value stored in node
-const SinglyNode *s_get_node_val(const SinglyNode *node, ListType type,  ListElemPtr dest) {
+const SinglyNode *s_get_node_val(const SinglyNode *node, DSDataTypes type,  DSData dest) {
   if(node == NULL || dest == NULL) {
     return NULL;
   }
@@ -70,7 +45,7 @@ const SinglyNode *s_get_node_val(const SinglyNode *node, ListType type,  ListEle
 
 
 // add node at position:  pos, node previously at pos goes before new node
-const SinglyNode *s_add_node_at(SinglyList *list, size_t pos, ListElemPtr data) {
+const SinglyNode *s_add_node_at(SinglyList *list, size_t pos, DSData data) {
   if(list == NULL || data == NULL || pos >= list->size)
     return NULL;
   SinglyNode *new_node = malloc(sizeof(SinglyNode));
@@ -104,7 +79,7 @@ const SinglyNode *s_add_node_at(SinglyList *list, size_t pos, ListElemPtr data) 
 
 
 
-const SinglyNode *s_add_node_after(SinglyList *list, SinglyNode *node, ListElemPtr data) {
+const SinglyNode *s_add_node_after(SinglyList *list, SinglyNode *node, DSData data) {
   if(list == NULL || node == NULL || data == NULL)
     return NULL;
   SinglyNode *new_node = malloc(sizeof(SinglyNode));
@@ -121,7 +96,7 @@ const SinglyNode *s_add_node_after(SinglyList *list, SinglyNode *node, ListElemP
 }
 
  
-const SinglyNode *s_replace_node(SinglyList *list, SinglyNode *node, ListElemPtr data) {
+const SinglyNode *s_replace_node(SinglyList *list, SinglyNode *node, DSData data) {
   if(list == NULL || node == NULL || data == NULL)
     return NULL;
   node->data = data;
@@ -132,7 +107,7 @@ const SinglyNode *s_replace_node(SinglyList *list, SinglyNode *node, ListElemPtr
 
 // CUSTOM LISTS
 
-const SinglyNode *cs_get_node_pos_val(SinglyList *list, size_t pos, ListElemPtr *dest) {
+const SinglyNode *cs_get_node_pos_val(SinglyList *list, size_t pos, DSData *dest) {
   if(list == NULL || dest == NULL || pos > list->size - 1)
     return NULL;
   SinglyNode *_it;
@@ -143,7 +118,7 @@ const SinglyNode *cs_get_node_pos_val(SinglyList *list, size_t pos, ListElemPtr 
 }
 
 
-const SinglyNode *cs_get_node_val(const SinglyNode *node, ListElemPtr *dest) {
+const SinglyNode *cs_get_node_val(const SinglyNode *node, DSData *dest) {
   if(node == NULL || dest == NULL) {
     return NULL;
   }
