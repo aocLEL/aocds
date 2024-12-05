@@ -1,7 +1,8 @@
 // HEADER FILE CONTAINING DEFINITIONS FOR SINGLY CIRCULAR AND NORMAL LINKED LISTS
 #pragma once 
 #include <stdio.h>
-#include "../../common/types.h"
+#include "../../common/types.h" // for ds types
+#include "generic.h" // for generic list macros and funcs
 
 /*
 TODO:
@@ -33,53 +34,62 @@ list->add_at(&list, pos, data); , dove il bind corretto per add_at è scelto in 
 typedef struct _s_node {
   struct _s_node *next;
   DSData data;
-} SinglyNode;
+} _SinglyNode;
+
+#define SinglyNode *_SinglyNode
 
 
 typedef struct _s_list {
   size_t      _size;
-  SinglyNode *_head;
-  SinglyNode *_tail;
-  SinglyNode *_curr; // curr points to last accessed node
+  SinglyNode  _head;
+  SinglyNode  _tail;
+  SinglyNode  _curr; // curr points to last accessed node
   DSDataTypes _type;
-} SinglyList;
+} _SinglyList;
 
 
+// base type is a pointer
+#define SinglyList *_SinglyList
 #define SinglyCircList SinglyList
 
 
-SinglyList *s_create_list(DSDataTypes type); // ok
+SinglyList s_create_list(DSDataTypes type); // ok
 
 // FOR NORMAL TYPES LISTS
 
 // GETTING
 
-const SinglyNode *s_get_node_pos_val(SinglyList *list, size_t pos, DSData dest); // ok
-const SinglyNode *s_get_node_val(const SinglyNode *node, DSDataTypes type,  DSData dest); // ok
-#define s_get_last(list, dest)  s_get_node_val(list->tail, list->type, dest) // ok
-#define s_get_first(list, dest) s_get_node_val(list->head, list->type, dest) // ok
-#define s_get_curr(list, dest)  s_get_node_val(list->curr, list->type, dest) // ok
+// get from position
+const SinglyNode s_get_atp(const SinglyList list, const size_t pos, DSData dest); // ok
+// get from node
+const SinglyNode s_get_atn(const SinglyList list, const SinglyNode node, DSData dest);
+#define s_get_last(list, dest)  s_get_atn(list, list->_tail, dest) // ok
+#define s_get_first(list, dest) s_get_atn(list, list->_head, dest) // ok
+#define s_get_curr(list, dest)  s_get_atn(list, list->_curr, dest) // ok
+
 
 // ADDING
 
-const SinglyNode *s_add_node_at(SinglyList *list, size_t pos, DSData data); // ok
-const SinglyNode *s_add_node_after(SinglyList *list, SinglyNode *node, DSData data); // ok
-const SinglyNode *s_replace_node(SinglyList *list, SinglyNode *node, DSData data); // ok
-#define s_add_node_start(list, data)      s_add_node_at(list, 0, data)
-#define s_add_node_end(list, data)        s_add_node_at(list, list->size - 1, data)
-#define s_add_node_after_curr(list, data) s_add_node_after(list, list->curr, data);
+const SinglyNode s_insert_at(SinglyList list, const size_t pos, const DSData data); // ok
+const SinglyNode s_insert_after(SinglyList list, SinglyNode node, const DSData data); // ok
+const SinglyNode s_replace(SinglyList list, SinglyNode node, const DSData data); // ok
+#define s_insert_start(list, data)      s_insert_at(list, 0, data)
+#define s_insert_end(list, data)        s_insert_after(list, list->_tail, data)
+#define s_insert_curr(list, data)       s_insert_after(list, list->_curr, data);
+
+// ITERATOR --> FUNCTIONS FOR GET AN INTERATOR AND ITERATE THORUGH THE LIST
 
 // FOR CUSTOM LISTS, HERE dest IS A void**
-
+/*
 const SinglyNode *cs_get_node_pos_val(SinglyList *list, size_t pos, DSData *dest); // ok
 const SinglyNode *cs_get_node_val(const SinglyNode *node, DSData *dest); // ok
 #define cs_get_last(list, dest)   cs_get_node_val(list->tail, dest)
 #define cs_get_first(list, dest)  cs_get_node_val(list->head, dest)
 #define cs_get_curr(list, dest)   cs_get_node_val(list->curr, dest)
-
+*/
 // DESTROYING
 
-int s_free(SinglyList *list); // ok
+int s_free(SinglyList list); // ok
 
 
 
@@ -90,18 +100,20 @@ int s_free(SinglyList *list); // ok
 // GETTING
 //SinglyNode *sc_get_node_val(SinglyCircList *list, size_t pos, DSData dest);
 
+/*
 SinglyNode *sc_get_curr_val(SinglyCircList *list, DSData dest);
 #define sc_get_last(list, dest)  sc_get_node_val(list, list->size - 1, dest)
 #define sc_get_first(list, dest) sc_get_node_val(list, 0, dest)
-
+*/
 // ADDING
-SinglyNode *sc_add_node_at(SinglyCircList *list, size_t pos, DSData data);
-SinglyNode *sc_add_node_after(SinglyCircList *list, SinglyNode *node, DSData data);
-SinglyNode *sc_replace_node(SinglyCircList *list, SinglyNode *node, DSData data);
-#define sc_add_node_start(list, data)      sc_add_node_at(list, 0, data)
-#define sc_add_node_end(list, data)        sc_add_node_at(list, list->size - 1, data)
-#define sc_add_node_after_curr(list, data) sc_add_node_after(list, list->curr, data);
+const SinglyNode sc_insert_at(SinglyCircList list, const size_t pos, const DSData data); // ok
+const SinglyNode sc_insert_after(SinglyCircList list, SinglyNode node, const DSData data); // ok
+const SinglyNode sc_replace(SinglyCircList list, SinglyNode node, const DSData data); // ok
+#define sc_insert_start(list, data)      sc_insert_at(list, 0, data)
+#define sc_insert_end(list, data)        sc_insert_after(list, list->_tail, data)
+#define sc_insert_curr(list, data)       sc_insert_after(list, list->_curr, data);
 
+/*
 // FOR CUSTOM LISTS, HERE dest IS A void**
 // GETTING
 SinglyNode *csc_get_node_val(SinglyCircList *list, size_t pos, DSData *dest);
@@ -115,7 +127,7 @@ SinglyNode *csc_replace_node(SinglyCircList *list, SinglyNode *node, DSData *dat
 #define csc_add_node_start(list, data)      csc_add_node_at(list, 0, data)
 #define csc_add_node_end(list, data)        csc_add_node_at(list, list->size - 1, data)
 #define csc_add_node_after_curr(list, data) csc_add_node_after(list, list->curr, data);
-
-// DESTROYING
+*/
+// DESTROYING --> probabilmente va bene anche solo quella della singly
 int sc_free(SinglyCircList *list);
 

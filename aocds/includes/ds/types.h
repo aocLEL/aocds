@@ -3,8 +3,13 @@
 
 
 
+#define SYS_64 __SIZE_OF_POINTER__ == 8
+
+// generic type for a ds item
 typedef void *DSData;
 
+
+// types for ds
 typedef enum _types {
     // fundamental types
     DS_SHORT_T=0,
@@ -27,7 +32,7 @@ typedef enum _types {
     DS_UINT16_T,
     DS_INT32_T,
     DS_UINT32_T,
-#if __SIZEOF_POINTER__ == 8
+#if SYS_64
     DS_INT64_T,
     DS_UINT64_T,
 #endif
@@ -37,3 +42,15 @@ typedef enum _types {
 
 
 void __type_dispatcher(DSDataTypes type, DSData dest, const DSData src);
+
+
+
+
+
+
+
+/*
+ 
+   THIS LIBRARY MEETS ERRNO PHILOSOFY, ALL FUNCTIONS RETURN NULL OR -1 IN CASE OF ERROR(AND ERRNO IS SET), VALID POINTER OR 1 IN CASE OF SUCCESS 
+*/
+

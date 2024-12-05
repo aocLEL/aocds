@@ -7,6 +7,7 @@ Types definition for data structures
 
 
 
+
 // cast void pointer to specific type, in order to allow inserting value directly into variable
 void __type_dispatcher(DSDataTypes type, DSData dest, const DSData src) {
     // first casting to long for avoiding compiler narrowing conversion warning
@@ -61,7 +62,7 @@ void __type_dispatcher(DSDataTypes type, DSData dest, const DSData src) {
             *(uint32_t*)dest = (uint32_t)src; 
             break;
     // if 64bit system, allow 64bit types
-    #if __SIZEOF_POINTER__ == 8
+    #if SYS_64
         case DS_INT64_T:
             *(int64_t*)dest = (int64_t)src; 
             break;
