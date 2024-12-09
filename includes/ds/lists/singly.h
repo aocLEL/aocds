@@ -73,10 +73,10 @@ const SinglyNode
 s_get_byv(const SinglyList list, const DSData value, const size_t offset);
 
 // get position of node, value in dest
-const int 
+const int16_t
 s_get_np(const SinglyList list, const SinglyNode node, DSData dest);
 // get pos of node by value(first occurrence), starting from offset
-const int 
+const int16_t 
 s_get_pbyv(const SinglyList list, const DSData value, const size_t offset);
 
 // useful macros
@@ -87,13 +87,20 @@ s_get_pbyv(const SinglyList list, const DSData value, const size_t offset);
 
 // ADDING
 
-const SinglyNode s_insert_at(SinglyList list, const size_t pos, const DSData data); // ok
-const SinglyNode s_insert_after(SinglyList list, SinglyNode node, const DSData data); // ok
-const SinglyNode s_insert_before(SinglyList list, SinglyNode node, const DSData data); // ok
-const SinglyNode s_replace(SinglyList list, SinglyNode node, const DSData data); // ok
-#define s_insert_start(list, data)      s_insert_at(list, 0, data)
-#define s_insert_end(list, data)        s_insert_after(list, list->_tail, data)
+const SinglyNode 
+s_insert_at(SinglyList list, const size_t pos, const DSData data); // ok
+const SinglyNode 
+s_insert_after(SinglyList list, SinglyNode node, const DSData data); // ok
+const SinglyNode 
+s_insert_before(SinglyList list, SinglyNode node, const DSData data); // ok
+const SinglyNode 
+s_replace(SinglyList list, SinglyNode node, const DSData data, DSData old_dest); // ok
+#define s_push_front(list, data)        s_insert_before(list, list->_head, data)
+#define s_push_back(list, data)         s_insert_after(list, list->_tail, data)
 #define s_insert_curr(list, data)       s_insert_after(list, list->_curr, data)
+
+const SinglyNode
+s_swap_node(SinglyList list, SinglyNode n1, SinglyNode n2);
 
 // ITERATOR --> FUNCTIONS FOR GET AN INTERATOR AND ITERATE THORUGH THE LIST
 
