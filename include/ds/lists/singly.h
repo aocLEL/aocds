@@ -88,11 +88,11 @@ s_get_pbyv(const SinglyList list, const DSData value, const size_t offset);
 // ADDING
 
 const SinglyNode 
-s_insert_at(SinglyList list, const size_t pos, const DSData data); // ok
+s_insert_at(const SinglyList list, const size_t pos, const DSData data); // ok
 const SinglyNode 
-s_insert_after(SinglyList list, SinglyNode node, const DSData data); // ok
+s_insert_after(const SinglyList list, const SinglyNode node, const DSData data); // ok
 const SinglyNode 
-s_insert_before(SinglyList list, SinglyNode node, const DSData data); // ok
+s_insert_before(const SinglyList list, const SinglyNode node, const DSData data); // ok
 const SinglyNode 
 s_replace(SinglyList list, SinglyNode node, const DSData data, DSData old_dest); // ok
 #define s_push_front(list, data)        s_insert_before(list, list->_head, data)
@@ -100,36 +100,28 @@ s_replace(SinglyList list, SinglyNode node, const DSData data, DSData old_dest);
 #define s_insert_curr(list, data)       s_insert_after(list, list->_curr, data)
 
 const SinglyNode
-s_swap_node(SinglyList list, SinglyNode n1, SinglyNode n2);
+s_swap_node(const SinglyList list, const SinglyNode n1, const SinglyNode n2);
+
+
+// REMOVING
+
+const int16_t 
+s_remove_node(const SinglyList list, SinglyNode node, DSData dest); // ok
+const int16_t 
+s_remove_atp(const SinglyList list, const size_t pos, DSData dest); // ok
+// remove by value
+// remove all by value
+// deallocazione
+// da capire per add e remove delle circular
 
 // ITERATOR --> FUNCTIONS FOR GET AN INTERATOR AND ITERATE THORUGH THE LIST
 
-// FOR CUSTOM LISTS, HERE dest IS A void**
-/*
-const SinglyNode *cs_get_node_pos_val(SinglyList *list, size_t pos, DSData *dest); // ok
-const SinglyNode *cs_get_node_val(const SinglyNode *node, DSData *dest); // ok
-#define cs_get_last(list, dest)   cs_get_node_val(list->tail, dest)
-#define cs_get_first(list, dest)  cs_get_node_val(list->head, dest)
-#define cs_get_curr(list, dest)   cs_get_node_val(list->curr, dest)
-*/
+
 // DESTROYING
 
 // int s_free(SinglyList list); // ok
 
 
-
-
-
-  //SinglyCircList *sc_create_list(ListType type); // unuseful, is the same struct as normal SinglyList
-// FOR NORMAL TYPES LISTS
-// GETTING
-//SinglyNode *sc_get_node_val(SinglyCircList *list, size_t pos, DSData dest);
-
-/*
-SinglyNode *sc_get_curr_val(SinglyCircList *list, DSData dest);
-#define sc_get_last(list, dest)  sc_get_node_val(list, list->size - 1, dest)
-#define sc_get_first(list, dest) sc_get_node_val(list, 0, dest)
-*/
 // ADDING
 const SinglyNode sc_insert_at(SinglyCircList list, const size_t pos, const DSData data); // ok
 const SinglyNode sc_insert_after(SinglyCircList list, SinglyNode node, const DSData data); // ok
@@ -138,21 +130,6 @@ const SinglyNode sc_replace(SinglyCircList list, SinglyNode node, const DSData d
 #define sc_insert_end(list, data)        sc_insert_after(list, list->_tail, data)
 #define sc_insert_curr(list, data)       sc_insert_after(list, list->_curr, data);
 
-/*
-// FOR CUSTOM LISTS, HERE dest IS A void**
-// GETTING
-SinglyNode *csc_get_node_val(SinglyCircList *list, size_t pos, DSData *dest);
-SinglyNode *csc_get_curr_val(SinglyCircList *list, DSData *dest);
-#define csc_get_last(list, dest)  csc_get_node_val(list, list->size - 1, dest)
-#define csc_get_first(list, dest) csc_get_node_val(list, 0, dest)
-//ADDING
-SinglyNode *csc_add_node_at(SinglyCircList *list, size_t pos, DSData *data);
-SinglyNode *csc_add_node_after(SinglyCircList *list, SinglyNode *node, DSData *data);
-SinglyNode *csc_replace_node(SinglyCircList *list, SinglyNode *node, DSData *data);
-#define csc_add_node_start(list, data)      csc_add_node_at(list, 0, data)
-#define csc_add_node_end(list, data)        csc_add_node_at(list, list->size - 1, data)
-#define csc_add_node_after_curr(list, data) csc_add_node_after(list, list->curr, data);
-*/
 // DESTROYING --> probabilmente va bene anche solo quella della singly
 int sc_free(SinglyCircList *list);
 

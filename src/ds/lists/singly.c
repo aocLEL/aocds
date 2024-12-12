@@ -75,7 +75,7 @@ s_get_np(const SinglyList list, const SinglyNode node, DSData dest) {
 const SinglyNode 
 s_get_byv(const SinglyList list, const DSData value, const size_t offset) {
   // get the offset node
-  SinglyNode _it = s_get_atp(list, offset, NULL);
+  SinglyNode _it = (SinglyNode)s_get_atp(list, offset, NULL);
   if(!_it) return NULL;
   // start the search from offset
   for(; _it != list->_tail && _it->_data != value; _it = _it->_next);
@@ -92,17 +92,17 @@ s_get_byv(const SinglyList list, const DSData value, const size_t offset) {
 const int16_t 
 s_get_pbyv(const SinglyList list, const DSData value, const size_t offset) {
   // get the node with value from offset
-  SinglyNode _it = s_get_byv(list, value, offset);
+  const SinglyNode _it = s_get_byv(list, value, offset);
   if(!_it) return -1;
   // search for its pos
-  int16_t c = s_get_np(list, _it, NULL);
+  const int16_t c = s_get_np(list, _it, NULL);
   return c;
 }
 
 
 // insert new datas at position pos
 const SinglyNode 
-s_insert_at(SinglyList list, const size_t pos, const DSData data) {
+s_insert_at(const SinglyList list, const size_t pos, const DSData data) {
   if(!list || pos > list->_size) { // allows also size + 1 (add at the end)
     errno = ENOENT; // no such node
     return NULL;
@@ -112,7 +112,7 @@ s_insert_at(SinglyList list, const size_t pos, const DSData data) {
     return NULL;
   new_node->_data = data;
   new_node->_next = NULL;
-  SinglyNode insert_pos = s_get_atp(list, pos - 1, NULL);
+  const SinglyNode insert_pos = s_get_atp(list, pos - 1, NULL);
   if(!insert_pos) // so head is NULL
     list->_head = list->_tail = new_node;
   else {
@@ -127,8 +127,8 @@ s_insert_at(SinglyList list, const size_t pos, const DSData data) {
 
 // insert after node, at pos (node + 1)
 const SinglyNode 
-s_insert_after(SinglyList list, SinglyNode node, const DSData data) {
-  int16_t node_pos = s_get_np(list, node, NULL);
+s_insert_after(const SinglyList list, const SinglyNode node, const DSData data) {
+  const int16_t node_pos = s_get_np(list, node, NULL);
   if(node_pos < 0) // node not found
     return NULL;
   return s_insert_at(list, node_pos + 1, data);
@@ -137,8 +137,8 @@ s_insert_after(SinglyList list, SinglyNode node, const DSData data) {
 
 // insert before node, at pos (node), node position will increment by 1
 const SinglyNode 
-s_insert_before(SinglyList list, SinglyNode node, const DSData data) {
-  int16_t node_pos = s_get_np(list, node, NULL);
+s_insert_before(const SinglyList list, const SinglyNode node, const DSData data) {
+  const int16_t node_pos = s_get_np(list, node, NULL);
   if(node_pos < 0) // node not found
     return NULL;
   return s_insert_at(list, node_pos, data);
@@ -146,12 +146,65 @@ s_insert_before(SinglyList list, SinglyNode node, const DSData data) {
 
 // replace value in node, returning the old one for deallocation
 const SinglyNode
-s_replace(SinglyList list, SinglyNode node, const DSData data, DSData old_dest) {
+s_replace(const SinglyList list, const SinglyNode node, const DSData data, DSData old_dest) {
   if(s_get_np(list, node, NULL) < 0) // node not found
     return NULL;
-  __type_dispatcher(list->_type, old_dest, node->_data);
+  s_get_nv(list, node, old_dest);
   node->_data = data;
   return node;
+}
+
+// swaps value of 2 nodes
+const SinglyNode
+s_swap_node(const SinglyList list, const SinglyNode n1, const SinglyNode n2) {
+  if(!n1 || !n2) {
+    errno = EINVAL;
+    return NULL;
+  } 
+  void *_tmp = n1->_data;
+  n1->_data = n2->_data;
+  n2->_data = _tmp;
+  return n1;
+}
+
+
+// removes node from the list
+const int16_t 
+s_remove_node(const SinglyList list, SinglyNode node, DSData dest) {
+  if(!list || !node) {
+    errno = EINVAL;
+    return -1;
+  }
+  if(node == list->_head) {
+    list->_head = node->_next;
+    if(!list->_head) // list was only node
+      list->_tail = NULL;
+  }
+  else {
+    SinglyNode _it = list->_head;
+    for(; _it && (_it->_next != list->_tail && _it->_next != node); _it = _it->_next);
+    if(!_it || _it->_next == list->_tail) {
+      if(list->_tail != node) { // if head is NULL or node isn't in the list
+        errno = ENOENT; // no such node
+        return -1;
+      }
+      list->_tail = _it;
+    }
+    _it->_next = _it->_next->_next;
+  }
+  s_get_nv(list, node, dest);
+  free(node);
+  list->_size--;
+  return 0;
+}
+
+
+// removes node at position pos
+const int16_t 
+s_remove_atp(const SinglyList list, const size_t pos, DSData dest) {
+  SinglyNode node = (SinglyNode)s_get_atp(list, pos, NULL);
+  if(!node) return -1;
+  return s_remove_node(list, node, dest);
 }
 
 // int s_free(SinglyList *list) {
